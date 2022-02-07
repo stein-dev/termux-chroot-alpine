@@ -23,7 +23,7 @@ busybox mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
 busybox mount --rbind /vendor "$CHROOT/vendor"
 busybox mount --rbind /sys "$CHROOT/sys"
 busybox mount --rbind /system "$CHROOT/system"
-busybox mount --rbind /sdcard "$CHROOT/mnt/sdcard"
+busybox mount --rbind /sdcard "$CHROOT/sdcard"
 busybox mount -o bind /data/data "$CHROOT/data/data"
 busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
 

@@ -17,8 +17,8 @@ busybox umount -l "$CHROOT/sys"
 echo "Unmounting $CHROOT/dev"
 busybox umount -l "$CHROOT/dev"
 
-echo "Unmounting $CHROOT/mnt/sdcard"
-busybox umount -l "$CHROOT/mnt/sdcard"
+echo "Unmounting $CHROOT/sdcard"
+busybox umount -l "$CHROOT/sdcard"
 
 echo "Unmounting $CHROOT/vendor"
 busybox umount -l "$CHROOT/vendor"
@@ -34,8 +34,6 @@ busybox umount -l "$CHROOT/data/data"
 
 echo "Unmounting $CHROOT/linkerconfig"
 busybox umount -l "$CHROOT/linkerconfig"
-
-
 
 echo "Unmounting $CHROOT/proc"
 cd "$CHROOT/apex"
