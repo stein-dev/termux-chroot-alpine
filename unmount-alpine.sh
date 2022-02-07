@@ -38,7 +38,7 @@ busybox umount -l "$CHROOT/linkerconfig"
 echo "Unmounting $CHROOT/proc"
 cd "$CHROOT/apex"
 for f in *; do
-        busybox umount -l "$CHROOT/apex/$f"g
+        busybox umount -l "$CHROOT/apex/$f"
 done
 cd - 2>&1 > /dev/null
 echo "Done"
