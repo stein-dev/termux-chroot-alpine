@@ -48,7 +48,7 @@ mkdir -p "$CHROOT/linkerconfig"
 echo "Done"
 
 echo "Setting up environment variables"
-cp termux-proot.sh $CHROOT/etc/profile.d/
+cp $PWD/termux-proot.sh $CHROOT/etc/profile.d/
 
 # sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"
 # echo "export ANDROID_DATA=\"/data\"" >> "$CHROOT/etc/profile"

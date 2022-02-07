@@ -28,7 +28,7 @@ busybox mount -o bind /data/data "$CHROOT/data/data"
 busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
 
 echo "Setting up environment variables"
-cp termux-proot.sh $CHROOT/etc/profile.d/
+cp $PWD/termux-proot.sh $CHROOT/etc/profile.d/
 # sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"
 # echo "export ANDROID_DATA=\"/data\"" >> "$CHROOT/etc/profile"
 # sed "/export ANDROID_ROOT=\"\/system\"/d" -i "$CHROOT/etc/profile"
