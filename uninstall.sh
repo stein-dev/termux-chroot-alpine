@@ -8,7 +8,7 @@ fi
 
 CHROOT='/data/alpinetest'
 
-./unmount-alpine.sh 2>&1 > /dev/null
+./unmount-alpine.sh || true
 
 echo "Deleting alpine rootfs"
 rm -rf $CHROOT
