@@ -4,29 +4,22 @@ set -e
 CHROOT='/data/alpinetest'
 
 echo "Mounting stuff..."
-# Mounting
-mount --rbind /dev "$CHROOT/dev"
-mkdir -p "$CHROOT/dev/shm"
-mkdir -p "$CHROOT/dev/binderfs"
 # From Android 10, /apex is needed
+busybox mount -t proc none $CHROOT/proc
+
 cd /apex
 for f in *; do
-        mount --rbind "/apex/$f" "$CHROOT/apex/$f"
+        busybox mount --rbind "/apex/$f" "$CHROOT/apex/$f"
 done
-cd - 2>&1 > /dev/nul
-mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
-mount --rbind /vendor "$CHROOT/vendor"
-mount --rbind /dev/pts "$CHROOT/dev/pts"
-mount --rbind /dev/binderfs "$CHROOT/dev/binderfs"
-mount -t tmpfs -o nosuid,nodev,noexec shm "$CHROOT/dev/shm"
-mount --rbind /sys "$CHROOT/sys"
-mount --rbind /system "$CHROOT/system"
-mount --rbind /odm "$CHROOT/odm"
-mount --rbind /linkerconfig "$CHROOT/linkerconfig"
-mount --rbind /sdcard "$CHROOT/sdcard"
-mount --rbind /proc "$CHROOT/proc"
-mount -t tmpfs tmpfs "$CHROOT/tmp"
-mount -o bind /data/data "$CHROOT/data/data"
+cd - 2>&1 > /dev/null
+
+busybox mount --rbind /dev "$CHROOT/dev"
+busybox mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
+busybox mount --rbind /vendor "$CHROOT/vendor"
+busybox mount --rbind /sys "$CHROOT/sys"
+busybox mount --rbind /system "$CHROOT/system"
+busybox mount --rbind /sdcard "$CHROOT/mnt/sdcard"
+busybox mount -o bind /data/data "$CHROOT/data/data"
 
 echo "Setting up environment variables"
 sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"
@@ -50,7 +43,7 @@ echo "export DISPLAY=\":1\"" >> "$CHROOT/etc/profile"
 sed "/export EXTERNAL_STORAGE=\"/d" -i "$CHROOT/etc/profile"
 echo "export EXTERNAL_STORAGE=\"/sdcard/\"" >> "$CHROOT/etc/profile"
 
-unset LD_PRELOAD
-unset PREFIX
+# unset LD_PRELOAD
+# unset PREFIX
 
 echo "Done"
