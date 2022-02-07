@@ -6,26 +6,46 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
+# PARAMETERS ---
 CHROOT='/data/alpinetest'
+MIRR='http://dl-cdn.alpinelinux.org/alpine'
+DNS1='1.1.1.1'
+DNS2='1.0.0.1'
 
-echo "Mounting stuff..."
-# From Android 10, /apex is needed
-busybox mount -t proc none $CHROOT/proc
+echo "Setting up folders"
+ARCH=`uname -m`
+mkdir -p $CHROOT
+cd $CHROOT
 
-cd /apex
+echo "Downloading alpine rootfs"
+FILE=`busybox wget -qO- "$MIRR/latest-stable/releases/$ARCH/latest-releases.yaml" | busybox grep -o -m 1 'alpine-minirootfs-.*.tar.gz'`
+
+busybox wget "$MIRR/latest-stable/releases/$ARCH/$FILE" -O rootfs.tar.gz
+
+
+echo "Extracting rootfs"
+busybox tar -xf rootfs.tar.gz
+
+echo "Setting up dns"
+echo "nameserver $DNS1
+nameserver $DNS2" > etc/resolv.conf
+
+echo "Creating mountpoints"
+mkdir -p "$CHROOT/apex"
+cd "/apex"
 for f in *; do
-        busybox mount --rbind "/apex/$f" "$CHROOT/apex/$f"
+        mkdir -p "$CHROOT/apex/$f"
 done
 cd - 2>&1 > /dev/null
 
-busybox mount --rbind /dev "$CHROOT/dev"
-busybox mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
-busybox mount --rbind /vendor "$CHROOT/vendor"
-busybox mount --rbind /sys "$CHROOT/sys"
-busybox mount --rbind /system "$CHROOT/system"
-busybox mount --rbind /sdcard "$CHROOT/sdcard"
-busybox mount -o bind /data/data "$CHROOT/data/data"
-busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
+# Creating mountpoints
+mkdir -p "$CHROOT/data/data"
+mkdir -p "$CHROOT/data/dalvik-cache"
+mkdir -p "$CHROOT/vendor"
+mkdir -p "$CHROOT/system"
+mkdir -p "$CHROOT/sdcard"
+mkdir -p "$CHROOT/linkerconfig"
+echo "Done"
 
 echo "Setting up environment variables"
 echo "
@@ -40,12 +60,13 @@ export COLORTERM=truecolor
 export DEX2OATBOOTCLASSPATH=/apex/com.android.art/javalib/core-oj.jar:/apex/com.android.art/javalib/core-libart.jar:/apex/com.android.art/javalib/core-icu4j.jar:/apex/com.android.art/javalib/okhttp.jar:/apex/com.android.art/javalib/bouncycastle.jar:/apex/com.android.art/javalib/apache-xml.jar:/system/framework/framework.jar:/system/framework/ext.jar:/system/framework/telephony-common.jar:/system/framework/voip-common.jar:/system/framework/ims-common.jar:/system/framework/framework-atb-backward-compatibility.jar:/system/framework/telephony-ext.jar:/system/framework/WfdCommon.jar
 export EXTERNAL_STORAGE=/sdcard
 [ -z '$LANG' ] && export LANG=C.UTF-8
-export PATH=${PATH}:/data/data/com.termux/files/usr/bin:/system/bin:/system/xbin
+export PATH=${PATH}:/system/bin:/system/xbin
 export TERM=xterm-256color
 export TMPDIR=/tmp
 export PULSE_SERVER=127.0.0.1
 export MOZ_FAKE_NO_SANDBOX=1
 " >> $CHROOT/etc/profile.d/termux-proot.sh
+
 # sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"
 # echo "export ANDROID_DATA=\"/data\"" >> "$CHROOT/etc/profile"
 # sed "/export ANDROID_ROOT=\"\/system\"/d" -i "$CHROOT/etc/profile"
@@ -66,8 +87,4 @@ export MOZ_FAKE_NO_SANDBOX=1
 # echo "export DISPLAY=\":1\"" >> "$CHROOT/etc/profile"
 # sed "/export EXTERNAL_STORAGE=\"/d" -i "$CHROOT/etc/profile"
 # echo "export EXTERNAL_STORAGE=\"/sdcard/\"" >> "$CHROOT/etc/profile"
-
-# unset LD_PRELOAD
-unset PREFIX
-
 echo "Done"
