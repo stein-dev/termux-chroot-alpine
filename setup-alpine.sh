@@ -65,7 +65,7 @@ export TERM=xterm-256color
 export TMPDIR=/tmp
 export PULSE_SERVER=127.0.0.1
 export MOZ_FAKE_NO_SANDBOX=1
-" >> $CHROOT/etc/profile.d/
+" >> $CHROOT/etc/profile.d/termux-proot.sh
 
 # sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"
 # echo "export ANDROID_DATA=\"/data\"" >> "$CHROOT/etc/profile"
