@@ -3,10 +3,10 @@ set -e
 
 CHROOT='/data/alpinetest'
 
-ps=(`lsof -Fp "$CHROOT" | sed "s/^p//"`)
-for pid in "${ps[@]}"; do
-        kill -9 "$pid"
-done
+# ps=(`lsof -Fp "$CHROOT" | sed "s/^p//"`)
+# for pid in "${ps[@]}"; do
+#         kill -9 "$pid"
+# done
 umount "$CHROOT/dev/pts"
 umount "$CHROOT/dev/shm"
 umount "$CHROOT/dev/binderfs"
