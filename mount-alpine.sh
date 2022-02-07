@@ -1,6 +1,7 @@
 #!/system/bin/sh
 set -e
 
+CHROOT='/data/alpinetest'
 
 echo "Mounting stuff..."
 # Mounting
