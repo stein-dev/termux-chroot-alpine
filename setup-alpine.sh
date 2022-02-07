@@ -11,23 +11,19 @@ echo "Setting up folders"
 ARCH=`uname -m`
 mkdir -p $CHROOT
 cd $CHROOT
-echo "Done"
 
 echo "Downloading alpine rootfs"
 FILE=`busybox wget -qO- "$MIRR/latest-stable/releases/$ARCH/latest-releases.yaml" | busybox grep -o -m 1 'alpine-minirootfs-.*.tar.gz'`
 
 busybox wget "$MIRR/latest-stable/releases/$ARCH/$FILE" -O rootfs.tar.gz
-echo "Done"
 
 
 echo "Extracting rootfs"
 busybox tar -xf rootfs.tar.gz
-echo "Done"
 
 echo "Setting up dns"
 echo "nameserver $DNS1
 nameserver $DNS2" > etc/resolv.conf
-echo "Done"
 
 echo "Creating mountpoints"
 mkdir -p "$CHROOT/apex"
@@ -36,11 +32,18 @@ for f in *; do
         mkdir -p "$CHROOT/apex/$f"
 done
 cd - 2>&1 > /dev/null
+
+# Creating mountpoints
 mkdir -p "$CHROOT/data/data"
+mkdir -p "$CHROOT/dev/shm"
+mkdir -p "$CHROOT/dev/binderfs"
+mkdir -p "$CHROOT/dev/pts"
 mkdir -p "$CHROOT/data/dalvik-cache"
 mkdir -p "$CHROOT/vendor"
 mkdir -p "$CHROOT/system"
-mkdir -p "$CHROOT/mnt/sdcard"
+mkdir -p "$CHROOT/odm"
+mkdir -p "$CHROOT/sdcard"
+mkdir -p "$CHROOT/linkerconfig"
 echo "Done"
 
 echo "Setting up environment variables"
@@ -65,5 +68,3 @@ echo "export DISPLAY=\":1\"" >> "$CHROOT/etc/profile"
 sed "/export EXTERNAL_STORAGE=\"/d" -i "$CHROOT/etc/profile"
 echo "export EXTERNAL_STORAGE=\"/sdcard/\"" >> "$CHROOT/etc/profile"
 echo "Done"
-
-unset LD_PRELOAD

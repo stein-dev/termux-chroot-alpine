@@ -5,7 +5,10 @@ CHROOT='/data/alpinetest'
 
 echo "Mounting stuff..."
 # From Android 10, /apex is needed
-busybox mount -t proc none $CHROOT/proc
+
+busybox mount --rbind /dev "$CHROOT/dev"
+mkdir -p "$CHROOT/dev/shm"
+mkdir -p "$CHROOT/dev/binderfs"
 
 cd /apex
 for f in *; do
@@ -13,12 +16,18 @@ for f in *; do
 done
 cd - 2>&1 > /dev/null
 
-busybox mount --rbind /dev "$CHROOT/dev"
 busybox mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
 busybox mount --rbind /vendor "$CHROOT/vendor"
+busybox mount --rbind /dev/pts "$CHROOT/dev/pts"
+busybox mount --rbind /dev/binderfs "$CHROOT/dev/binderfs"
+busybox mount -t tmpfs -o nosuid,nodev,noexec shm "$CHROOT/dev/shm"
 busybox mount --rbind /sys "$CHROOT/sys"
 busybox mount --rbind /system "$CHROOT/system"
-busybox mount --rbind /sdcard "$CHROOT/mnt/sdcard"
+busybox mount --rbind /odm "$CHROOT/odm"
+busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
+busybox mount --rbind /sdcard "$CHROOT/sdcard"
+busybox mount --rbind /proc "$CHROOT/proc"
+busybox mount -t tmpfs tmpfs "$CHROOT/tmp"
 busybox mount -o bind /data/data "$CHROOT/data/data"
 
 echo "Setting up environment variables"
@@ -43,7 +52,7 @@ echo "export DISPLAY=\":1\"" >> "$CHROOT/etc/profile"
 sed "/export EXTERNAL_STORAGE=\"/d" -i "$CHROOT/etc/profile"
 echo "export EXTERNAL_STORAGE=\"/sdcard/\"" >> "$CHROOT/etc/profile"
 
-# unset LD_PRELOAD
-# unset PREFIX
+unset LD_PRELOAD
+unset PREFIX
 
 echo "Done"
