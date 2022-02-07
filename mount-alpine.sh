@@ -1,14 +1,16 @@
 #!/system/bin/sh
 set -e
 
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 CHROOT='/data/alpinetest'
 
 echo "Mounting stuff..."
 # From Android 10, /apex is needed
-
-busybox mount --rbind /dev "$CHROOT/dev"
-mkdir -p "$CHROOT/dev/shm"
-mkdir -p "$CHROOT/dev/binderfs"
+busybox mount -t proc none $CHROOT/proc
 
 cd /apex
 for f in *; do
@@ -16,19 +18,14 @@ for f in *; do
 done
 cd - 2>&1 > /dev/null
 
+busybox mount --rbind /dev "$CHROOT/dev"
 busybox mount -o bind /data/dalvik-cache "$CHROOT/data/dalvik-cache"
 busybox mount --rbind /vendor "$CHROOT/vendor"
-busybox mount --rbind /dev/pts "$CHROOT/dev/pts"
-busybox mount --rbind /dev/binderfs "$CHROOT/dev/binderfs"
-busybox mount -t tmpfs -o nosuid,nodev,noexec shm "$CHROOT/dev/shm"
 busybox mount --rbind /sys "$CHROOT/sys"
 busybox mount --rbind /system "$CHROOT/system"
-busybox mount --rbind /odm "$CHROOT/odm"
-busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
-busybox mount --rbind /sdcard "$CHROOT/sdcard"
-busybox mount --rbind /proc "$CHROOT/proc"
-busybox mount -t tmpfs tmpfs "$CHROOT/tmp"
+busybox mount --rbind /sdcard "$CHROOT/mnt/sdcard"
 busybox mount -o bind /data/data "$CHROOT/data/data"
+busybox mount --rbind /linkerconfig "$CHROOT/linkerconfig"
 
 echo "Setting up environment variables"
 sed "/export ANDROID_DATA=\"\/data\"/d" -i "$CHROOT/etc/profile"

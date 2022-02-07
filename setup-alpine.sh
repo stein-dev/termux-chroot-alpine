@@ -1,6 +1,11 @@
 #!/system/bin/sh
 set -e
 
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 # PARAMETERS ---
 CHROOT='/data/alpinetest'
 MIRR='http://dl-cdn.alpinelinux.org/alpine'
@@ -35,13 +40,9 @@ cd - 2>&1 > /dev/null
 
 # Creating mountpoints
 mkdir -p "$CHROOT/data/data"
-mkdir -p "$CHROOT/dev/shm"
-mkdir -p "$CHROOT/dev/binderfs"
-mkdir -p "$CHROOT/dev/pts"
 mkdir -p "$CHROOT/data/dalvik-cache"
 mkdir -p "$CHROOT/vendor"
 mkdir -p "$CHROOT/system"
-mkdir -p "$CHROOT/odm"
 mkdir -p "$CHROOT/sdcard"
 mkdir -p "$CHROOT/linkerconfig"
 echo "Done"

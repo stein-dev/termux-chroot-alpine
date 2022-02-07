@@ -1,26 +1,46 @@
 #!/system/bin/sh
 set -e
 
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
 CHROOT='/data/alpinetest'
 
-echo "Unmouting folders..."
-busybox umount "$CHROOT/dev/pts"
-busybox umount "$CHROOT/dev/shm"
-busybox umount "$CHROOT/dev/binderfs"
-busybox umount "$CHROOT/dev"
-busybox umount "$CHROOT/data/dalvik-cache"
-busybox umount "$CHROOT/vendor"
-busybox umount "$CHROOT/sys"
-busybox umount "$CHROOT/linkerconfig"
-busybox umount "$CHROOT/system"
-busybox umount "$CHROOT/odm"
-busybox umount "$CHROOT/sdcard"
+echo "Unmounting $CHROOT/proc"
 busybox umount "$CHROOT/proc"
-busybox umount "$CHROOT/tmp"
-busybox umount "$CHROOT/data/data"
+
+echo "Unmounting $CHROOT/sys"
+busybox umount -l "$CHROOT/sys"
+
+echo "Unmounting $CHROOT/dev"
+busybox umount -l "$CHROOT/dev"
+
+echo "Unmounting $CHROOT/mnt/sdcard"
+busybox umount -l "$CHROOT/mnt/sdcard"
+
+echo "Unmounting $CHROOT/vendor"
+busybox umount -l "$CHROOT/vendor"
+
+echo "Unmounting $CHROOT/data/dalvik-cache"
+busybox umount -l "$CHROOT/data/dalvik-cache"
+
+echo "Unmounting $CHROOT/system"
+busybox umount -l "$CHROOT/system"
+
+echo "Unmounting $CHROOT/data/data"
+busybox umount -l "$CHROOT/data/data"
+
+echo "Unmounting $CHROOT/linkerconfig"
+busybox umount -l "$CHROOT/linkerconfig"
+
+
+
+echo "Unmounting $CHROOT/proc"
 cd "$CHROOT/apex"
 for f in *; do
-        busybox umount "$CHROOT/apex/$f"
+        busybox umount -l "$CHROOT/apex/$f"g
 done
 cd - 2>&1 > /dev/null
 echo "Done"
