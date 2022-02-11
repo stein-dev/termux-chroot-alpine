@@ -7,4 +7,4 @@ fi
 
 CHROOT='/data/chrootalpine'
 
-busybox chroot $CHROOT /bin/bash --login
+busybox chroot $CHROOT /bin/sh --login
