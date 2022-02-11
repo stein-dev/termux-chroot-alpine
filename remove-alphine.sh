@@ -6,7 +6,7 @@ if [ "$(id -u)" != "0" ]; then
    exit 1
 fi
 
-CHROOT='/data/alpinetest'
+CHROOT='/data/chrootalpine'
 
 ./unmount-alpine.sh || true
 

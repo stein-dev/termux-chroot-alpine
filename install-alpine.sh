@@ -7,7 +7,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # PARAMETERS ---
-CHROOT='/data/alpinetest'
+CHROOT='/data/chrootalpine'
 MIRR='http://dl-cdn.alpinelinux.org/alpine'
 DNS1='1.1.1.1'
 DNS2='1.0.0.1'
